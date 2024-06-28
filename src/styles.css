@@ -1,0 +1,297 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+}
+
+body {
+    line-height: 1.5;
+    font-family: system-ui;
+    --green-color: #059669;
+    --grey-color: #e2e8f0;
+    --gold-color: #f7ad2d;
+    --boxshadow: 2px 2px 4px 1px  rgb(0 0 0 / 10%);
+}
+
+
+div.container {
+    min-height: 100vh;
+    display: grid;
+    /* grid-template-columns: clamp(180px, 20%, 270px) 1fr; */
+    grid-template-columns: 250px 1fr;
+
+    /* grid-template-rows: auto 1fr; */
+    grid-template-rows: 100px 1fr;
+}
+
+div.header {
+    background-color: white;
+    grid-column: 1 / 3;
+
+    display: flex;
+    align-items: center;
+}
+
+.header img {
+    width: 50px;
+    color: var(--green-color);
+    margin-left: 20px;
+}
+
+.header p {
+    font-size: 2.5rem;
+    margin-left: 5px;
+}
+
+.header span {
+    color: var(--green-color);
+}
+
+div.sidebar {
+    background-color: var(--green-color);
+    color: white;
+    padding: 5px;
+
+}
+
+.dash {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    font-size: 1.3rem;
+}
+
+.dash:hover {
+    background-color: #4cda85;
+    cursor:pointer;
+}
+
+.dash :first-child {
+    width: 25px;
+}
+
+.sidebar .project {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 30px;
+    font-size: 1.1rem;
+}
+
+.sidebar .project:hover {
+    background-color: #4cda85;
+    cursor:pointer;
+}
+
+/* AIM */
+.sidebar .project img{
+    width: 15px;
+}
+
+.sidebar .project img#close{
+    margin-left: auto;
+}
+
+.sidebar .project img#close:hover{
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+div.main {
+    background-color: var(--grey-color);
+    padding: 30px 40px;
+}
+
+.projectCard {
+    background-color: #22c55e;
+    color: white;
+    font-size: 2.5rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: var(--boxshadow);
+}
+
+.todoCards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+}
+
+.todoCard {
+    background-color: white;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+    padding: 10px 10px;
+}
+
+.todoCard:hover {
+    box-shadow: var(--boxshadow);
+}
+
+.left {
+    display: flex;
+    gap: 10px;
+}
+
+.right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.taskcontent :first-child {
+    font-size: 1.2rem;
+}
+
+.taskcontent #pr{
+    font-size: 0.9rem;
+}
+
+.taskcontent :last-child {
+    font-size: 0.9rem;
+}
+
+.right .duedate {
+    font-size: 0.9rem;
+}
+
+.right button {
+    background-color: white;
+    border: none;
+    padding: 3px 5px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+}
+
+.right button :hover {
+    cursor:pointer;
+    background-color: rgb(234, 234, 234);
+}
+
+button img {
+    width: 25px;
+
+}
+
+.addtask {
+    display: flex;
+    gap: 5px;
+    padding: 5px 10px;
+}
+
+.addtask img {
+    width: 16px;
+}
+
+.addtask:hover {
+    cursor: pointer;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: var(--boxshadow);
+}
+
+#todoDialog {
+    margin: auto;
+    padding: 10px;
+
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+
+#projectDialog {
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    width: 250px;
+    background-color: var(--green-color);
+}
+
+.sectionProject {
+    display:flex;
+    justify-content: center;
+}
+
+#titleProject {
+    padding: 5px 7px;
+    border: none;
+    border-radius: 5px;;
+}
+
+#titleProject:focus {
+    outline: none;
+}
+
+.projectFormButtons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.projectFormButtons button {
+    background-color: white;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+
+.section {
+    margin-bottom: 5px;
+}
+
+#title {
+    width: 100%;
+    padding: 3px 3px;
+}
+
+#descriptionText {
+    padding: 3px 3px;
+}
+
+#radioButtons div {
+    margin-left: 10px;
+    font-size: 0.9rem;
+}
+
+/* #description :last-child {
+    color: rgba(128, 128, 128, 0.589);
+} */
+
+.section#project {
+    display: flex;
+    gap: 10px;
+}
+
+.todoFormButtons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.todoFormButtons button {
+    background-color: var(--green-color);
+    border: none;
+    padding: 5px 20px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.todoFormButtons button:hover {
+    background-color: #05966898;
+}

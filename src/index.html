@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="./styles.css"> -->
+    <!-- <script type="module" src="./index.js" defer></script> -->
+</head>
+<body>
+    <div class="container">
+
+        <!-- 1-HEADER -->
+        <div class="header">
+            <img src="./icons/todo.svg" alt="">
+            <p>hwat<span>ToDo</span></p>
+        </div>
+
+        <!-- 2-SIDEBAR -->
+        <div class="sidebar">
+
+            <div class="dash" id="homeButton">
+                <img src="./icons/home.svg" alt="">
+                <div>Home</div>
+            </div>
+            <div class="dash" id="todayButton">
+                <img src="./icons/calendard.svg" alt="">
+                <div>Today</div>
+            </div>
+            <div class="dash" id="thisWeekButton">
+                <img src="./icons/calendarw.svg" alt="">
+                <div>This Week</div>
+            </div>
+            <div class="dash">
+                <img src="./icons/label.svg" alt="">
+                <div>Projects</div>
+            </div>
+
+            <div class="projectCards">
+                <!-- <div class="project">
+                    <img src="./icons/pound.svg" alt="">
+                    <div>Project 1</div>
+                </div> -->
+                <!-- <div class="project" id="addProject">
+                    <img src="./icons/plus.svg" alt="">
+                    <div>Add Project</div>
+                </div> -->
+            </div>
+
+            <dialog id="projectDialog">
+                <form method="post">
+                    <div class="sectionProject">
+                        <input type="text" id="titleProject" name="titleProject" required>
+                    </div>
+                    <div class="projectFormButtons">
+                        <button id="addButtonProject" formmethod="dialog">Add</button>
+                        <button id="closeButtonProject">Close</button>
+                    </div>
+                </form>
+            </dialog>
+
+
+        </div>
+
+        <!-- 3-MAIN -->
+        <div class="main">
+
+            <!-- <div class="projectCard">All Tasks</div>
+            <div class="todoCards"> -->
+
+                <!-- <div class="todoCard" style="border-left: 5px solid greenyellow;">
+                    <div class="left">
+                        <input type="checkbox" id="status" name="status" value="open">
+                        <div class="taskcontent">
+                            <p class="title">Task 1 <span id="pr">(Project 1)</span></p>
+                            <p class="decription">This is the description for task 1 and waht if there is much mroe text waht heppens then o wonder</p>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <div class="duedate">DATE</div>
+                        <button class="edit">
+                            <img src="./icons/edit.svg" alt="">
+                        </button>
+                        <button class="delete">
+                            <img src="./icons/trash.svg" alt="">
+                        </button>
+                    </div>
+                </div> -->
+
+                <!-- <div class="addtask">
+                    <img src="./icons/plus2.svg" alt="">
+                    <p>Add Task</p>
+                </div> -->
+
+            </div>
+        </div>
+
+        <dialog id="todoDialog">
+            <form method="post">
+
+                <div class="section">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+
+                <div class="section" id="description">
+                    <div>Description:</div>
+                    <textarea rows="4" cols="40" id="descriptionText"></textarea>
+                </div>
+
+                <div class="section">
+                    <label for="duedate">Due date:</label>
+                    <input type="date" id="duedate" name="duedate" required>
+                </div>
+
+                <div class="section" id="radioButtons">
+                    <p>Priority:</p>
+                    <div>
+                      <input type="radio" id="low" name="priority" value="low" checked>
+                      <label for="low">low</label>
+                    </div>
+                    <div>
+                      <input type="radio" id="medium" name="priority" value="medium">
+                      <label for="medium">medium</label>
+                    </div>
+                    <div>
+                      <input type="radio" id="high" name="priority" value="high">
+                      <label for="high">high</label>
+                    </div>
+                </div>
+
+                <div class="section" id="project">
+                    <p>Project:</p>
+                    <select name="project" id="projectSelection">
+                        <option value="All Tasks">All Tasks</option>
+                        <option value="Project 1">Project 1</option>
+                    </select>
+                </div>
+                
+                <div class="todoFormButtons">
+                    <button id="addButton" formmethod="dialog">Add</button>
+                    <button type="reset">Reset</button>
+                    <button id="closeButton">Close</button>
+                </div>
+            </form>
+        </dialog>
+        
+    </div>
+</body>
+</html>
