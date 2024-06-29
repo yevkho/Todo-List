@@ -24,6 +24,19 @@ export default function renderWebPage (myProjectsBase, index){
     configureProjectDialogButtons (myProjectsBase, index)
 }
 
+export function renderTodayThisWeekPage (myProjectsBase, index) {
+    //clear the field
+    const mainSection = document.querySelector(".main");
+    mainSection.replaceChildren();
+    //render new page
+    renderPageProject (myProjectsBase, index);
+    renderPageTodoItems (myProjectsBase, index);
+    renderProjectItems (myProjectsBase);
+}
+
+let handleCreateButtonClick;
+let handleCreateButtonClickEdit;
+
 function renderPageProject (myProjectsBase, index) {
     const mainSection = document.querySelector(".main");    
     //set up top page anchors
@@ -37,8 +50,6 @@ function renderPageProject (myProjectsBase, index) {
     mainSection.appendChild(topProjectCard);
     mainSection.appendChild(cardSection);
 }
-
-let handleCreateButtonClickEdit;
 
 function renderPageTodoItems (myProjectsBase, index) {
     //select cardSection
@@ -125,7 +136,12 @@ function renderPageTodoItems (myProjectsBase, index) {
                 ItemToEdit.dueDate = duedate;
                 ItemToEdit.changePriority(priority);
                 //re-render page
-                renderWebPage (myProjectsBase, index);
+                if (index == 1 || index == 2) {
+                    renderTodayThisWeekPage (myProjectsBase, index);
+                } else {
+                    renderWebPage (myProjectsBase, index);
+                }
+                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
             }
             createButton.addEventListener('click', handleCreateButtonClickEdit)
         })
@@ -148,7 +164,12 @@ function renderPageTodoItems (myProjectsBase, index) {
                     }
                 })
                 //re-render page
-                renderWebPage (myProjectsBase, index)
+                if (index == 1 || index == 2) {
+                    renderTodayThisWeekPage (myProjectsBase, index);
+                } else {
+                    renderWebPage (myProjectsBase, index);
+                }
+                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
             })
             //set identifier to only add one eventsListener per button 
             deleteButton.setAttribute('data-listener', 'true');
@@ -190,8 +211,6 @@ function renderAddTaskButton (){
         })
 }
 
-let handleCreateButtonClick;
-
 function configureTodoDialogButtons (myProjectsBase, index) {
     //(1)close dialog button
     const dialog = document.querySelector("#todoDialog");
@@ -213,7 +232,7 @@ function configureTodoDialogButtons (myProjectsBase, index) {
         const description = document.querySelector("#descriptionText").value;
         const duedate = document.querySelector("#duedate").value;
         console.log(duedate);
-        
+
         const priority = document.querySelector('input[name="priority"]:checked').value;
         const project = document.querySelector("#projectSelection").value;
         //exit function if one of the elements is missing 
@@ -226,6 +245,7 @@ function configureTodoDialogButtons (myProjectsBase, index) {
         myProjectsBase.addTodo (newItem, index);
         //re-render the page 
         renderWebPage (myProjectsBase, index);
+        localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
     }
 
     createButton.addEventListener('click', handleCreateButtonClick);
@@ -240,7 +260,7 @@ function renderProjectItems (myProjectsBase) {
     projectCards.replaceChildren();
     //iterate through myProjectsBase and render each todoItem
     myProjectsBase.myProjects.forEach(function (projectItem, index) {
-        if (index !== 0) { //to not render the default project (All Items)
+        if (index !== 0 && index !== 1 && index !== 2) { //to not render the default project (All Items) //NEW
             const projectDiv = document.createElement('div')
             projectDiv.classList.add('project')
             projectDiv.setAttribute("data-index",`${index}`);
@@ -271,6 +291,7 @@ function renderProjectItems (myProjectsBase) {
                 e.stopPropagation();
                 //re-render page
                 renderWebPage (myProjectsBase, 0)
+                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
             })
 
             projectDiv.appendChild(hashIcon);
@@ -327,6 +348,7 @@ function configureProjectDialogButtons (myProjectsBase, index) {
         myProjectsBase.addProject (newProject);
         console.log(myProjectsBase);
         renderWebPage (myProjectsBase, index);
+        localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
     }
     addButtonProject.addEventListener('click', handleAddButtonClick)
 }
