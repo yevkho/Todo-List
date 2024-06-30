@@ -1,29 +1,48 @@
+import createTodoItem from './itemsfactory';
+
 export default function createMyProjectsBase (returnObject) { 
     //set baseline myProjects ([0]'All Tasks', [1]'Today', [2]'This Week')
     let myProjects = []
 
-    //use returnObject rom local storage or set up new myProjects
+    //use returnObject from local storage or set up new myProjects
     if (returnObject) {
         myProjects = returnObject.myProjects
+        //reset the 'cleared' property for each project array 
+        myProjects.forEach(function (projectItem, projectIndex) {
+            if(projectItem.cleared) {
+                projectItem.cleared = false;
+            }
+        })
+        //construct new todoItems and push them into the default (All Tasks) and secondary projects
+        myProjects[0].todoList.forEach(function (todoItem, todoIndex) {
+            let newTodoItem = createTodoItem(todoItem.title, todoItem.description, todoItem.dueDate, todoItem.priority, todoItem.projectIndex);
+            myProjects[0].todoList.splice(todoIndex, 1, newTodoItem);
+            if (todoItem.projectIndex) {
+                if (!myProjects[todoItem.projectIndex].cleared) { // Clear the array once and mark as cleared
+                    myProjects[todoItem.projectIndex].todoList.length = 0; 
+                    myProjects[todoItem.projectIndex].cleared = true;
+                }
+                myProjects[todoItem.projectIndex].todoList.push(newTodoItem);
+            }
 
-        
-
+        })
+        console.log(myProjects);
     } else {
-    const allTasksProject = {
-        title: "All Tasks",
-        todoList: [],
-    }
-    const TodayProject = {
-        title: "Today",
-        todoList: [],
-    }
-    const thisWeekProject = {
-        title: "This Week",
-        todoList: [],
-    }
-    myProjects.push(allTasksProject);
-    myProjects.push(TodayProject);
-    myProjects.push(thisWeekProject);
+        const allTasksProject = {
+            title: "All Tasks",
+            todoList: [],
+        }
+        const TodayProject = {
+            title: "Today",
+            todoList: [],
+        }
+        const thisWeekProject = {
+            title: "This Week",
+            todoList: [],
+        }
+        myProjects.push(allTasksProject);
+        myProjects.push(TodayProject);
+        myProjects.push(thisWeekProject);
     }
 
     //push new Project to myProjects

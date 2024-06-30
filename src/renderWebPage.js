@@ -36,6 +36,7 @@ export function renderTodayThisWeekPage (myProjectsBase, index) {
 
 let handleCreateButtonClick;
 let handleCreateButtonClickEdit;
+let handleAddButtonClick;
 
 function renderPageProject (myProjectsBase, index) {
     const mainSection = document.querySelector(".main");    
@@ -127,7 +128,7 @@ function renderPageTodoItems (myProjectsBase, index) {
                 const description = document.querySelector("#descriptionText").value;
                 const duedate = document.querySelector("#duedate").value;
                 const priority = document.querySelector('input[name="priority"]:checked').value;
-                if (!title || !description || !duedate || !priority || !project) {
+                if (!title || !description || !duedate || !priority) {
                     return;
                 }
                 const ItemToEdit = myProjectsBase.myProjects[index].todoList[indexItem];
@@ -232,15 +233,19 @@ function configureTodoDialogButtons (myProjectsBase, index) {
         const description = document.querySelector("#descriptionText").value;
         const duedate = document.querySelector("#duedate").value;
         console.log(duedate);
-
         const priority = document.querySelector('input[name="priority"]:checked').value;
-        const project = document.querySelector("#projectSelection").value;
+        
+        let projectIndex;
+        if (index !==0 && index !==1 && index !==2) {
+            projectIndex = index;
+        }
+
         //exit function if one of the elements is missing 
-        if (!title || !description || !duedate || !priority || !project) {
+        if (!title || !description || !duedate || !priority) {
             return;
         }
         //create new todoItem
-        const newItem = createTodoItem (title, description, duedate, priority, project);
+        const newItem = createTodoItem (title, description, duedate, priority, projectIndex);
         //push new todoItem to the projects array
         myProjectsBase.addTodo (newItem, index);
         //re-render the page 
@@ -320,8 +325,6 @@ function renderAddProjectButton (){
     addProject.appendChild(addProjectPara);
     projectCards.appendChild(addProject);
 }
-
-let handleAddButtonClick;
 
 function configureProjectDialogButtons (myProjectsBase, index) {
     //(1)close dialog button
