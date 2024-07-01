@@ -37,12 +37,12 @@
             <div class="projectCards"></div>
 
             <dialog id="projectDialog">
-                <form method="post">
+                <form method="dialog" id="projectForm">
                     <div class="sectionProject">
                         <input type="text" id="titleProject" name="titleProject" required>
                     </div>
                     <div class="projectFormButtons">
-                        <button id="addButtonProject" formmethod="dialog">Add</button>
+                        <button id="addButtonProject">Add</button>
                         <button id="closeButtonProject">Close</button>
                     </div>
                 </form>
@@ -54,7 +54,7 @@
         </div>
 
         <dialog id="todoDialog">
-            <form method="post">
+            <form method="dialog" id="todoForm">
 
                 <div class="section">
                     <label for="title">Title:</label>
@@ -88,7 +88,7 @@
                 </div>
                 
                 <div class="todoFormButtons">
-                    <button id="addButton" formmethod="dialog">Add</button>
+                    <button id="addButton">Add</button>
                     <button type="reset">Reset</button>
                     <button id="closeButton">Close</button>
                 </div>

@@ -4,7 +4,6 @@ import {renderTodayThisWeekPage} from './renderWebPage.js';
 import compileTodayAndThisWeek from './compileTodayThisWeek.js';
 import './styles.css';
 
-
 //(1) Set up MyProjects object
 let myProjectsBase;
 
@@ -23,7 +22,6 @@ if (localStorage.getItem('myProjectsBase')) {
     localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase));
 }
 console.log(myProjectsBase);
-
 
 //(2) render HOME page at launch
 renderWebPage (myProjectsBase, 0)

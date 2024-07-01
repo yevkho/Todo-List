@@ -64,11 +64,33 @@ function renderPageTodoItems (myProjectsBase, index) {
         const leftDiv = document.createElement('div')
         leftDiv.classList.add('left')
 
+
         const checkbox = document.createElement('input');
         checkbox.setAttribute("type","checkbox");
         checkbox.setAttribute("id","status");
         checkbox.setAttribute("name","status");
-        checkbox.setAttribute("value","open");
+        //add checkbox event on 'change'
+        checkbox.addEventListener('change', () =>{
+            if (checkbox.checked) {
+                todoItem.toggleCompleteStatus(todoItem);
+                cardDiv.style.opacity = '0.5';
+                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase));
+              } else {
+                todoItem.toggleCompleteStatus(todoItem);
+                cardDiv.style.opacity = '1';
+                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase));
+            }
+        })
+        //render checked / unchecked div
+        if (todoItem.showCompleteStatus() == 'open') {
+            console.log("open")
+            cardDiv.style.opacity = '1';
+            checkbox.checked = false;
+        } else if (todoItem.showCompleteStatus() == 'closed'){
+            console.log("closed")
+            cardDiv.style.opacity = '0.5';
+            checkbox.checked = true;
+        }
 
         const taskDiv = document.createElement('div');
         taskDiv.classList.add('taskcontent')
@@ -89,11 +111,14 @@ function renderPageTodoItems (myProjectsBase, index) {
         duedate.innerText = `${todoItem.dueDate}`
 
         if (todoItem.showPriority() == "low") {
-            cardDiv.setAttribute("style","border-left:5px solid #adff2f");
+            cardDiv.style.borderLeft = '5px solid #adff2f';
+            // cardDiv.setAttribute("style","border-left:5px solid #adff2f");
         } else if (todoItem.showPriority() == "medium") {
-            cardDiv.setAttribute("style","border-left:5px solid orange");
+            cardDiv.style.borderLeft = '5px solid orange';
+            // cardDiv.setAttribute("style","border-left:5px solid orange");
         } else if (todoItem.showPriority() == "high") {
-            cardDiv.setAttribute("style","border-left:5px solid red");
+            cardDiv.style.borderLeft = '5px solid red';
+            // cardDiv.setAttribute("style","border-left:5px solid red");
         }
 
         //set editItem button
@@ -135,7 +160,7 @@ function renderPageTodoItems (myProjectsBase, index) {
                 ItemToEdit.title = title;
                 ItemToEdit.description = description;
                 ItemToEdit.dueDate = duedate;
-                ItemToEdit.changePriority(priority);
+                ItemToEdit.changePriority(priority, todoItem); //SOLUTION TBD to update the todoItem.priority property (that is passed to JSON) 
                 //re-render page
                 if (index == 1 || index == 2) {
                     renderTodayThisWeekPage (myProjectsBase, index);
@@ -143,6 +168,10 @@ function renderPageTodoItems (myProjectsBase, index) {
                     renderWebPage (myProjectsBase, index);
                 }
                 localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
+                //clear input field(s)
+                e.preventDefault();
+                todoForm.reset();
+                todoDialog.close();
             }
             createButton.addEventListener('click', handleCreateButtonClickEdit)
         })
@@ -215,9 +244,11 @@ function renderAddTaskButton (){
 function configureTodoDialogButtons (myProjectsBase, index) {
     //(1)close dialog button
     const dialog = document.querySelector("#todoDialog");
+    const todoForm = document.querySelector("#todoForm");
     const closeButton = document.querySelector("#closeButton");
     closeButton.addEventListener('click', (e) => {
         e.preventDefault();
+        todoForm.reset();
         dialog.close();
     })
     //(2)addTodoItem button
@@ -234,23 +265,28 @@ function configureTodoDialogButtons (myProjectsBase, index) {
         const duedate = document.querySelector("#duedate").value;
         console.log(duedate);
         const priority = document.querySelector('input[name="priority"]:checked').value;
-        
+               
         let projectIndex;
         if (index !==0 && index !==1 && index !==2) {
             projectIndex = index;
         }
 
+        const completeStatus = "open";
         //exit function if one of the elements is missing 
         if (!title || !description || !duedate || !priority) {
             return;
         }
         //create new todoItem
-        const newItem = createTodoItem (title, description, duedate, priority, projectIndex);
+        const newItem = createTodoItem (title, description, duedate, priority, projectIndex, completeStatus);
         //push new todoItem to the projects array
         myProjectsBase.addTodo (newItem, index);
         //re-render the page 
         renderWebPage (myProjectsBase, index);
         localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
+        //clear input field(s)
+        e.preventDefault();
+        todoForm.reset();
+        todoDialog.close();
     }
 
     createButton.addEventListener('click', handleCreateButtonClick);
@@ -330,8 +366,10 @@ function configureProjectDialogButtons (myProjectsBase, index) {
     //(1)close dialog button
     const projectDialog = document.querySelector("#projectDialog");
     const closeButtonProject = document.querySelector("#closeButtonProject");
+    const projectForm = document.querySelector("#projectForm");
     closeButtonProject.addEventListener('click', (e) => {
         e.preventDefault();
+        projectForm.reset();
         projectDialog.close();
     })
     //(2)add todoProject button
@@ -352,6 +390,12 @@ function configureProjectDialogButtons (myProjectsBase, index) {
         console.log(myProjectsBase);
         renderWebPage (myProjectsBase, index);
         localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
+        //clear input field(s)
+        e.preventDefault();
+        projectForm.reset();
+        projectDialog.close();
+
+
     }
     addButtonProject.addEventListener('click', handleAddButtonClick)
 }

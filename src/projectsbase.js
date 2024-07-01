@@ -15,7 +15,7 @@ export default function createMyProjectsBase (returnObject) {
         })
         //construct new todoItems and push them into the default (All Tasks) and secondary projects
         myProjects[0].todoList.forEach(function (todoItem, todoIndex) {
-            let newTodoItem = createTodoItem(todoItem.title, todoItem.description, todoItem.dueDate, todoItem.priority, todoItem.projectIndex);
+            let newTodoItem = createTodoItem(todoItem.title, todoItem.description, todoItem.dueDate, todoItem.priority, todoItem.projectIndex, todoItem.completeStatus);
             myProjects[0].todoList.splice(todoIndex, 1, newTodoItem);
             if (todoItem.projectIndex) {
                 if (!myProjects[todoItem.projectIndex].cleared) { // Clear the array once and mark as cleared

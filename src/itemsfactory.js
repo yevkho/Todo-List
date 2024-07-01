@@ -1,15 +1,17 @@
-export default function createTodoItem (title, description, dueDate, priority, projectIndex) {
-    let completeStatus = "open"
+export default function createTodoItem (title, description, dueDate, priority, projectIndex, completeStatus) {
+    console.log(completeStatus);
     
     const showPriority = () => priority;
-    function changePriority (newPriority) {
+    function changePriority (newPriority, todoItem) { //passing todoItem to solve JSON issue (TBD)
         priority = newPriority;
+        todoItem.priority = newPriority;
     }
 
     const showCompleteStatus  = () => completeStatus;
-    function toggleCompleteStatus () {
+    function toggleCompleteStatus (todoItem) {//passing todoItem to solve JSON issue (TBD)
         completeStatus == "open" ? completeStatus = "closed" :  completeStatus = "open";
+        todoItem.completeStatus = completeStatus;
     }
-    
-    return {title, description, dueDate, priority, showPriority, changePriority, projectIndex, showCompleteStatus, toggleCompleteStatus}
+
+    return {title, description, dueDate, priority, showPriority, changePriority, projectIndex, completeStatus, showCompleteStatus, toggleCompleteStatus}
 }
