@@ -394,8 +394,6 @@ function configureProjectDialogButtons (myProjectsBase, index) {
         e.preventDefault();
         projectForm.reset();
         projectDialog.close();
-
-
     }
     addButtonProject.addEventListener('click', handleAddButtonClick)
 }
