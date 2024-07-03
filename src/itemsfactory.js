@@ -1,6 +1,5 @@
 export default function createTodoItem (title, description, dueDate, priority, projectIndex, completeStatus) {
-    console.log(completeStatus);
-    
+   
     const showPriority = () => priority;
     function changePriority (newPriority, todoItem) { //passing todoItem to solve JSON issue (TBD)
         priority = newPriority;

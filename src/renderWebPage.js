@@ -1,27 +1,25 @@
 import editImageIcon from "./icons/edit.svg";
 import deleteImageIcon from "./icons/trash.svg";
 import plus2Icon from "./icons/plus2.svg";
-import createTodoItem from './itemsfactory.js';
 import poundIcon from "./icons/pound.svg";
 import plusIcon from "./icons/plus.svg";
 import closeIcon from "./icons/close.svg";
+
+import createTodoItem from './itemsfactory.js';
 import createProjectItem from './projectsfactory.js';
 
 export default function renderWebPage (myProjectsBase, index){
     //clear the field
     const mainSection = document.querySelector(".main");
     mainSection.replaceChildren(); 
-    
     //render new page
     renderPageProject (myProjectsBase, index);
-
     renderPageTodoItems (myProjectsBase, index);
     renderAddTaskButton ();
     configureTodoDialogButtons (myProjectsBase, index);
-
     renderProjectItems (myProjectsBase);
     renderAddProjectButton ();
-    configureProjectDialogButtons (myProjectsBase, index)
+    configureProjectDialogButtons (myProjectsBase, index);
 }
 
 export function renderTodayThisWeekPage (myProjectsBase, index) {
@@ -34,9 +32,79 @@ export function renderTodayThisWeekPage (myProjectsBase, index) {
     renderProjectItems (myProjectsBase);
 }
 
+//UTILITIES (Variables & Functions)
+
+//store event-handlers for 'create' buttons in order to clear them and prevent piling up (TBD better solution)
 let handleCreateButtonClick;
 let handleCreateButtonClickEdit;
 let handleAddButtonClick;
+
+function setEditButton (myProjectsBase, index, todoItem, indexItem) {
+    //pull up itemDialog
+    const dialog = document.querySelector("#todoDialog");
+    dialog.showModal();
+    //populate Dialog fields with retrieved Items' values
+    document.querySelector("#title").value = todoItem.title;
+    document.querySelector("#descriptionText").value = todoItem.description;
+    document.querySelector("#duedate").value = todoItem.dueDate;
+    document.querySelector(`input[value='${todoItem.showPriority()}']`).checked = true;
+    
+    //Dialog 'create' button config
+    const createButton = document.querySelector("#addButton");
+    //clear existing eventListeners on 'create' button
+    if (handleCreateButtonClick || handleCreateButtonClickEdit) {
+        createButton.removeEventListener('click', handleCreateButtonClick);
+        createButton.removeEventListener('click', handleCreateButtonClickEdit);
+    }
+    //add new eventListener that updates existing todoItem in place
+    handleCreateButtonClickEdit = function(e) {
+        const title = document.querySelector("#title").value;
+        const description = document.querySelector("#descriptionText").value;
+        const duedate = document.querySelector("#duedate").value;
+        const priority = document.querySelector('input[name="priority"]:checked').value;
+        if (!title || !description || !duedate || !priority) {
+            return;
+        }
+        const ItemToEdit = myProjectsBase.myProjects[index].todoList[indexItem]; //could have added as separate method in projectsBase (editTodoItem)
+        ItemToEdit.title = title;
+        ItemToEdit.description = description;
+        ItemToEdit.dueDate = duedate;
+        ItemToEdit.changePriority(priority, todoItem); //SOLUTION TBD to update the todoItem.priority property (that is passed to JSON) 
+        //re-render page
+        if (index == 1 || index == 2) {
+            renderTodayThisWeekPage (myProjectsBase, index);
+        } else {
+            renderWebPage (myProjectsBase, index);
+        }
+        localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
+        //clear input field(s)
+        e.preventDefault();//prevent validation after clearing and before closing
+        todoForm.reset();
+        todoDialog.close();
+    }
+    createButton.addEventListener('click', handleCreateButtonClickEdit);
+};
+
+function setDeleteButton (myProjectsBase, index, todoItem, indexItem) {
+    //delete from original array
+    myProjectsBase.myProjects[index].todoList.splice(indexItem, 1)
+    //delete from secondary array
+    myProjectsBase.myProjects.forEach(function (projectItem, ProjectIndex) {
+        const secondIndex = projectItem.todoList.indexOf(todoItem);
+        if (secondIndex !== -1) {
+            myProjectsBase.myProjects[ProjectIndex].todoList.splice(secondIndex, 1)
+        }
+    })
+    //re-render page
+    if (index == 1 || index == 2) {
+        renderTodayThisWeekPage (myProjectsBase, index);
+    } else {
+        renderWebPage (myProjectsBase, index);
+    }
+    localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
+};
+
+// DOM RENDERING
 
 function renderPageProject (myProjectsBase, index) {
     const mainSection = document.querySelector(".main");    
@@ -44,10 +112,8 @@ function renderPageProject (myProjectsBase, index) {
     const topProjectCard = document.createElement('div');
     topProjectCard.classList.add('projectCard');
     topProjectCard.innerText = `${myProjectsBase.myProjects[index].title}`;
-
     const cardSection = document.createElement('div');
     cardSection.classList.add('todoCards');
-    
     mainSection.appendChild(topProjectCard);
     mainSection.appendChild(cardSection);
 }
@@ -55,16 +121,27 @@ function renderPageProject (myProjectsBase, index) {
 function renderPageTodoItems (myProjectsBase, index) {
     //select cardSection
     const cardSection = document.querySelector('.todoCards')
-    //iterate though myProjectsBase and render each todoItem
+    //iterate though myProjectsBase and render each todoItem (in the relevant project)
     myProjectsBase.myProjects[index].todoList.forEach(function (todoItem, indexItem) {
-
         const cardDiv = document.createElement('div')
         cardDiv.classList.add('todoCard')
-        
         const leftDiv = document.createElement('div')
         leftDiv.classList.add('left')
+        const taskDiv = document.createElement('div');
+        taskDiv.classList.add('taskcontent')
+        const titlePara = document.createElement('p');
+        titlePara.classList.add('title');
+        titlePara.innerText = `${todoItem.title}`
+        const descriptionPara = document.createElement('p');
+        descriptionPara.classList.add('description')
+        descriptionPara.innerText = `${todoItem.description}`
+        const rightDiv = document.createElement('div')
+        rightDiv.classList.add('right')
+        const duedate = document.createElement('div')
+        duedate.classList.add('duedate')
+        duedate.innerText = `${todoItem.dueDate}`
 
-
+        //set checkbox
         const checkbox = document.createElement('input');
         checkbox.setAttribute("type","checkbox");
         checkbox.setAttribute("id","status");
@@ -74,42 +151,22 @@ function renderPageTodoItems (myProjectsBase, index) {
             if (checkbox.checked) {
                 todoItem.toggleCompleteStatus(todoItem);
                 cardDiv.style.opacity = '0.5';
-                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase));
               } else {
                 todoItem.toggleCompleteStatus(todoItem);
                 cardDiv.style.opacity = '1';
-                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase));
             }
+            localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase));
         })
         //render checked / unchecked div
         if (todoItem.showCompleteStatus() == 'open') {
-            console.log("open")
             cardDiv.style.opacity = '1';
             checkbox.checked = false;
         } else if (todoItem.showCompleteStatus() == 'closed'){
-            console.log("closed")
             cardDiv.style.opacity = '0.5';
             checkbox.checked = true;
         }
 
-        const taskDiv = document.createElement('div');
-        taskDiv.classList.add('taskcontent')
-
-        const titlePara = document.createElement('p');
-        titlePara.classList.add('title');
-        titlePara.innerText = `${todoItem.title}`
-
-        const descriptionPara = document.createElement('p');
-        descriptionPara.classList.add('description')
-        descriptionPara.innerText = `${todoItem.description}`
-
-        const rightDiv = document.createElement('div')
-        rightDiv.classList.add('right')
-
-        const duedate = document.createElement('div')
-        duedate.classList.add('duedate')
-        duedate.innerText = `${todoItem.dueDate}`
-
+        //display task priority
         if (todoItem.showPriority() == "low") {
             cardDiv.style.borderLeft = '5px solid #adff2f';
             // cardDiv.setAttribute("style","border-left:5px solid #adff2f");
@@ -126,55 +183,9 @@ function renderPageTodoItems (myProjectsBase, index) {
         editButton.classList.add('edit')
         const editImage = document.createElement('img')
         editImage.src = editImageIcon;
-        //
         editButton.addEventListener('click', () => {
-            //pull up itemDialog
-            const dialog = document.querySelector("#todoDialog");
-            dialog.showModal();
-            //populate Dialog fields with Items' values
-            console.log(todoItem.title);
-            document.querySelector("#title").value = todoItem.title;
-            console.log(todoItem.description);
-            document.querySelector("#descriptionText").value = todoItem.description;
-            console.log(todoItem.dueDate);
-            document.querySelector("#duedate").value = todoItem.dueDate;
-            console.log(todoItem.showPriority());
-            document.querySelector(`input[value='${todoItem.showPriority()}']`).checked = true;
-            //
-            const createButton = document.querySelector("#addButton");
-            //clear existing eventListeners
-            if (handleCreateButtonClick || handleCreateButtonClickEdit) {
-                createButton.removeEventListener('click', handleCreateButtonClick);
-                createButton.removeEventListener('click', handleCreateButtonClickEdit);
-            }
-            //add new eventListener that updates existing todoItem in place
-            handleCreateButtonClickEdit = function(e) {
-                const title = document.querySelector("#title").value;
-                const description = document.querySelector("#descriptionText").value;
-                const duedate = document.querySelector("#duedate").value;
-                const priority = document.querySelector('input[name="priority"]:checked').value;
-                if (!title || !description || !duedate || !priority) {
-                    return;
-                }
-                const ItemToEdit = myProjectsBase.myProjects[index].todoList[indexItem];
-                ItemToEdit.title = title;
-                ItemToEdit.description = description;
-                ItemToEdit.dueDate = duedate;
-                ItemToEdit.changePriority(priority, todoItem); //SOLUTION TBD to update the todoItem.priority property (that is passed to JSON) 
-                //re-render page
-                if (index == 1 || index == 2) {
-                    renderTodayThisWeekPage (myProjectsBase, index);
-                } else {
-                    renderWebPage (myProjectsBase, index);
-                }
-                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
-                //clear input field(s)
-                e.preventDefault();
-                todoForm.reset();
-                todoDialog.close();
-            }
-            createButton.addEventListener('click', handleCreateButtonClickEdit)
-        })
+            setEditButton (myProjectsBase, index, todoItem, indexItem)
+        });
 
         //set deleteItem button
         const deleteButton = document.createElement('button')
@@ -183,24 +194,9 @@ function renderPageTodoItems (myProjectsBase, index) {
         deleteImage.src = deleteImageIcon;
         // set deletion of Item from original and secondary arrays
         if (!deleteButton.dataset.listener) {
-            deleteButton.addEventListener('click', () => {
-                //delete from original array
-                myProjectsBase.myProjects[index].todoList.splice(indexItem, 1)
-                //delete from secondary array
-                myProjectsBase.myProjects.forEach(function (projectItem, ProjectIndex) {
-                    const secondIndex = projectItem.todoList.indexOf(todoItem);
-                    if (secondIndex !== -1) {
-                        myProjectsBase.myProjects[ProjectIndex].todoList.splice(secondIndex, 1)
-                    }
-                })
-                //re-render page
-                if (index == 1 || index == 2) {
-                    renderTodayThisWeekPage (myProjectsBase, index);
-                } else {
-                    renderWebPage (myProjectsBase, index);
-                }
-                localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
-            })
+            deleteButton.addEventListener('click', ()=> {
+                setDeleteButton (myProjectsBase, index, todoItem, indexItem)
+            });
             //set identifier to only add one eventsListener per button 
             deleteButton.setAttribute('data-listener', 'true');
         }
@@ -233,7 +229,6 @@ function renderAddTaskButton (){
         addTask.appendChild(plusIcon);
         addTask.appendChild(addTaskPara);
         cardSection.appendChild(addTask);
-        
         // calibrate add task button (show dialog)
         const dialog = document.querySelector("#todoDialog");
         addTask.addEventListener('click', () => {
@@ -265,7 +260,6 @@ function configureTodoDialogButtons (myProjectsBase, index) {
         const duedate = document.querySelector("#duedate").value;
         console.log(duedate);
         const priority = document.querySelector('input[name="priority"]:checked').value;
-               
         let projectIndex;
         if (index !==0 && index !==1 && index !==2) {
             projectIndex = index;
@@ -288,7 +282,6 @@ function configureTodoDialogButtons (myProjectsBase, index) {
         todoForm.reset();
         todoDialog.close();
     }
-
     createButton.addEventListener('click', handleCreateButtonClick);
 }
 
@@ -325,9 +318,8 @@ function renderProjectItems (myProjectsBase) {
                     const removalIndex = myProjectsBase.myProjects[0].todoList.indexOf(todoItem);
                     myProjectsBase.myProjects[0].todoList.splice(removalIndex, 1);
                 });
-                myProjectsBase.myProjects.splice(index, 1)
-                console.log(myProjectsBase);
-
+                // myProjectsBase.myProjects.splice(index, 1)
+                myProjectsBase.deleteProject(index)
                 //prevent the above div-eventHandler triggering
                 e.stopPropagation();
                 //re-render page
@@ -387,7 +379,6 @@ function configureProjectDialogButtons (myProjectsBase, index) {
         //create new projectItem
         const newProject = createProjectItem(title);
         myProjectsBase.addProject (newProject);
-        console.log(myProjectsBase);
         renderWebPage (myProjectsBase, index);
         localStorage.setItem('myProjectsBase', JSON.stringify(myProjectsBase)); //JSON
         //clear input field(s)
