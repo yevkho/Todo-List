@@ -1,5 +1,5 @@
-export default function createProjectItem (title) {
-    let todoList = [];
+export default function createProjectItem(title) {
+  let todoList = [];
 
-    return {title, todoList}
+  return { title, todoList };
 }
